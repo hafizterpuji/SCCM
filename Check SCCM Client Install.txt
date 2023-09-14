@@ -1,0 +1,22 @@
+
+#updated to include PKI Check
+ 
+$r = "Running"
+$SCCMService = (Get-Service -name ccmexec).status
+$SCCMSetupExe = 'C:\Windows\ccmsetup\ccmsetup.exe'
+$PKICheck = (get-childitem -path Cert:\LocalMachine\My).Subject
+ 
+If($PKICheck -like "CN=$Env:ComputerName.johnsonmatthey.com"){
+    Write-Host "PKI Cert Installed"
+        If!($SCCMService -eq $R){
+            Write-Host "SCCM NotInstalled"
+            Write-Host "Attempting to Install SCCM Client"
+            Start-Process -FilePath $SCCMSetupExe -ArgumentList "SMSSITECODE=BIS FSP=WEAZFSP01.johnsonmatthey.com" -Wait -NoNewWindow
+            }
+            Else{
+                Write-Host "SCCM Installed"
+            }
+}
+Else{
+    Write-Host "PKI Not Installed"
+}
