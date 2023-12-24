@@ -1,0 +1,1 @@
+SCCM /MECM related script
