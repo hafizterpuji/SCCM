@@ -1,0 +1,160 @@
+Query 
+
+OS Detail and etc
+
+select distinct SMS_R_System.Name, SMS_R_System.LastLogonUserName, SMS_R_System.LastLogonTimestamp, SMS_G_System_COMPUTER_SYSTEM.Manufacturer, SMS_G_System_COMPUTER_SYSTEM.Model, SMS_G_System_PC_BIOS.SMBIOSBIOSVersion, SMS_R_System.ADSiteName, SMS_R_System.LastLogonUserDomain, SMS_R_System.IPAddresses, SMS_G_System_SYSTEM_ENCLOSURE.ChassisTypes, SMS_G_System_CH_ClientSummary.ClientActiveStatus, SMS_G_System_CH_ClientSummary.ClientCheckPass, SMS_R_System.OperatingSystemNameandVersion, SMS_G_System_OPERATING_SYSTEM.BuildNumber, SMS_G_System_PC_BIOS.SerialNumber, SMS_R_System.MACAddresses, SMS_G_System_PROCESSOR.Name, SMS_G_System_COMPUTER_SYSTEM.SystemType, SMS_G_System_SYSTEM_ENCLOSURE.SMBIOSAssetTag from  SMS_R_System inner join SMS_G_System_COMPUTER_SYSTEM on SMS_G_System_COMPUTER_SYSTEM.ResourceID = SMS_R_System.ResourceId inner join SMS_G_System_PC_BIOS on SMS_G_System_PC_BIOS.ResourceID = SMS_R_System.ResourceId inner join SMS_G_System_CH_ClientSummary on SMS_G_System_CH_ClientSummary.ResourceID = SMS_R_System.ResourceId inner join SMS_G_System_SYSTEM_ENCLOSURE on SMS_G_System_SYSTEM_ENCLOSURE.ResourceID = SMS_R_System.ResourceId inner join SMS_G_System_PROCESSOR on SMS_G_System_PROCESSOR.ResourceID = SMS_R_System.ResourceId inner join SMS_G_System_PROCESSOR as Processor on Processor.ResourceID = SMS_R_System.ResourceId inner join SMS_G_System_OPERATING_SYSTEM on SMS_G_System_OPERATING_SYSTEM.ResourceID = SMS_R_System.ResourceId
+
+#####################################################################################################################################################################
+
+Virtual Machine
+
+select SMS_R_SYSTEM.ResourceID,SMS_R_SYSTEM.ResourceType,SMS_R_SYSTEM.Name,SMS_R_SYSTEM.SMSUniqueIdentifier,     
+SMS_R_SYSTEM.ResourceDomainORWorkgroup,SMS_R_SYSTEM.Client from SMS_R_System      
+inner join SMS_G_System_COMPUTER_SYSTEM on      
+SMS_G_System_COMPUTER_SYSTEM.ResourceId = SMS_R_System.ResourceId      
+where SMS_G_System_COMPUTER_SYSTEM.Model like "%Virtual%"
+
+######################################################################################################################
+
+Bitlocker
+
+select SMS_R_SYSTEM.ResourceID,SMS_R_SYSTEM.ResourceType,SMS_R_SYSTEM.Name,SMS_R_SYSTEM.SMSUniqueIdentifier,SMS_R_SYSTEM.ResourceDomainORWorkgroup,SMS_R_SYSTEM.Client from SMS_R_System inner join SMS_G_System_DCMDeploymentState on SMS_G_System_DCMDeploymentState.ResourceID = SMS_R_System.ResourceId WHERE BaselineID = 'ScopeId_90C5E0C5-F59C-4E0D-9C02-20968A4D19EC/Baseline_fe750736-f352-4d4f-b668-ca1cb7b04cf0' AND CollectionID = 'CAS017F7' AND ComplianceState = 1
+
+##############################################################################################################################
+
+Last Hardware scan 
+
+select 
+SMS_G_System_LastSoftwareScan.LastScanDate, 
+SMS_R_System.Name, 
+SMS_G_System_WORKSTATION_STATUS.LastHardwareScan 
+from  SMS_R_System inner join SMS_G_System_LastSoftwareScan on SMS_G_System_LastSoftwareScan.ResourceID = SMS_R_System.ResourceId inner join SMS_G_System_WORKSTATION_STATUS on SMS_G_System_WORKSTATION_STATUS.ResourceID = SMS_R_System.ResourceId order by SMS_G_System_WORKSTATION_STATUS.LastHardwareScan
+
+~~~~~~
+
+select SMS_R_System.Name, 
+SMS_G_System_WORKSTATION_STATUS.LastHardwareScan 
+from  SMS_R_System inner join SMS_G_System_WORKSTATION_STATUS on SMS_G_System_WORKSTATION_STATUS.ResourceID = SMS_R_System.ResourceId order by SMS_G_System_WORKSTATION_STATUS.LastHardwareScan
+
+###############################################################################################################################
+
+The following SCCM collection query can be used to list all computers with a particular application and version installed.
+
+select SMS_R_System.ResourceID,SMS_R_System.ResourceType,SMS_R_System.Name,SMS_R_System.SMSUniqueIdentifier,SMS_R_System.ResourceDomainORWorkgroup,SMS_R_System.Client
+from SMS_R_System
+inner join SMS_G_System_COMPUTER_SYSTEM on SMS_G_System_COMPUTER_SYSTEM.ResourceID = SMS_R_System.ResourceId
+where SMS_G_System_COMPUTER_SYSTEM.Name not in
+(select distinct SMS_G_System_COMPUTER_SYSTEM.Name
+from SMS_R_System
+inner join SMS_G_System_COMPUTER_SYSTEM on SMS_G_System_COMPUTER_SYSTEM.ResourceID = SMS_R_System.ResourceId
+inner join SMS_G_System_ADD_REMOVE_PROGRAMS on SMS_G_System_ADD_REMOVE_PROGRAMS.ResourceID = SMS_R_System.ResourceId
+where SMS_G_System_ADD_REMOVE_PROGRAMS.DisplayName like "%Adobe Reader 9%") 
+
+~~~~~~~
+select SMS_R_System.NetbiosName,
+SMS_G_System_ADD_REMOVE_PROGRAMS.DisplayName from
+SMS_R_System inner join SMS_G_System_ADD_REMOVE_PROGRAMS on
+SMS_G_System_ADD_REMOVE_PROGRAMS.ResourceId =
+SMS_R_System.ResourceId where
+SMS_G_System_ADD_REMOVE_PROGRAMS.DisplayName like "%MDOP MBAM%" 
+and SMS_G_System_ADD_REMOVE_PROGRAMS.Version = '%VERSION%')
+
+############################################################################
+
+
+OS Detail and etc
+
+select distinct 
+SMS_R_System.Name, 
+SMS_R_System.LastLogonUserName, 
+SMS_R_System.LastLogonTimestamp, 
+SMS_G_System_COMPUTER_SYSTEM.Manufacturer, 
+SMS_G_System_COMPUTER_SYSTEM.Model, 
+SMS_G_System_PC_BIOS.SMBIOSBIOSVersion, 
+SMS_R_System.ADSiteName, 
+SMS_R_System.LastLogonUserDomain, 
+SMS_R_System.IPAddresses, 
+SMS_G_System_SYSTEM_ENCLOSURE.ChassisTypes, 
+SMS_G_System_CH_ClientSummary.ClientActiveStatus, 
+SMS_G_System_CH_ClientSummary.ClientCheckPass, 
+SMS_R_System.OperatingSystemNameandVersion, 
+SMS_G_System_OPERATING_SYSTEM.BuildNumber, 
+SMS_G_System_PC_BIOS.SerialNumber, 
+SMS_R_System.MACAddresses, 
+SMS_G_System_PROCESSOR.Name, 
+SMS_G_System_COMPUTER_SYSTEM.SystemType, 
+SMS_G_System_SYSTEM_ENCLOSURE.SMBIOSAssetTag from  SMS_R_System inner join SMS_G_System_COMPUTER_SYSTEM on SMS_G_System_COMPUTER_SYSTEM.ResourceID = SMS_R_System.ResourceId inner join SMS_G_System_PC_BIOS on SMS_G_System_PC_BIOS.ResourceID = SMS_R_System.ResourceId inner join SMS_G_System_CH_ClientSummary on SMS_G_System_CH_ClientSummary.ResourceID = SMS_R_System.ResourceId inner join SMS_G_System_SYSTEM_ENCLOSURE on SMS_G_System_SYSTEM_ENCLOSURE.ResourceID = SMS_R_System.ResourceId inner join SMS_G_System_PROCESSOR on SMS_G_System_PROCESSOR.ResourceID = SMS_R_System.ResourceId inner join SMS_G_System_PROCESSOR as Processor on Processor.ResourceID = SMS_R_System.ResourceId inner join SMS_G_System_OPERATING_SYSTEM on SMS_G_System_OPERATING_SYSTEM.ResourceID = SMS_R_System.ResourceId
+
+###################################################################################################
+add multiple machine using query - limit 1000 machines per query
+
+select SMS_R_SYSTEM.ResourceID,SMS_R_SYSTEM.ResourceType,SMS_R_SYSTEM.Name,SMS_R_SYSTEM.SMSUniqueIdentifier,SMS_R_SYSTEM.ResourceDomainORWorkgroup,SMS_R_SYSTEM.Client from SMS_R_System where SMS_R_System.NetbiosName in ("P1138795","P1131468")
+
+###################################################################################################
+
+Powershell -executionPolicy Bypass -file "LismarDataMesLevel15.81XXKBW-81X64-R01-Remove-Old.ps1"
+
+if(!(Get-AppvClientPackage -PackageId '8914D06E-BF36-491D-90AD-7D81B5ED5FAA’ -VersionId ‘A033366F-BBDC-4CC6-915B-647CE43F7843’)){Write-Host $true}
+
+Prev Version PkgID = ‘8914D06E-BF36-491D-90AD-7D81B5ED5FAA’
+Prev Version VersionID = ‘A033366F-BBDC-4CC6-915B-647CE43F7843’ 
+
+########################################################################################################################
+SCCM Client query for last logon
+
+select SMS_R_SYSTEM.ResourceID,SMS_R_SYSTEM.ResourceType,SMS_R_SYSTEM.Name,SMS_R_SYSTEM.SMSUniqueIdentifier,SMS_R_SYSTEM.ResourceDomainORWorkgroup,SMS_R_SYSTEM.Client from SMS_R_System inner join SMS_G_System_CH_ClientSummary on SMS_G_System_CH_ClientSummary.ResourceID = SMS_R_System.ResourceId where SMS_R_System.SystemOUName = "edis.tatasteel.com/FUSE/Clients" and SMS_G_System_CH_ClientSummary.ClientActiveStatus = 0 and SMS_G_System_CH_ClientSummary.ADLastLogonTime > "03/01/2020 07:00:00 AM"
+
+########################################################################################################
+OU
+
+select SMS_R_SYSTEM.ResourceID,SMS_R_SYSTEM.ResourceType,SMS_R_SYSTEM.Name,SMS_R_SYSTEM.SMSUniqueIdentifier,SMS_R_SYSTEM.ResourceDomainORWorkgroup,SMS_R_SYSTEM.Client from SMS_R_System where SMS_R_System.SystemOUName = "AERO.AERO.BOMBARDIER.NET/BOMBARDIER AEROSPACE/CA/SANJOSE"
+
+££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££
+
+Webex
+
+select SMS_R_System.Name, SMS_G_System_INSTALLED_SOFTWARE.ProductName, SMS_G_System_INSTALLED_SOFTWARE.ProductVersion, SMS_R_System.LastLogonUserName, SMS_R_System.LastLogonTimestamp from  SMS_R_System inner join SMS_G_System_INSTALLED_SOFTWARE on SMS_G_System_INSTALLED_SOFTWARE.ResourceID = SMS_R_System.ResourceId where SMS_G_System_INSTALLED_SOFTWARE.ProductName like "%webex%"
+
+
+£££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££
+
+SCCM Query for all laptop
+
+select SMS_R_SYSTEM.ResourceID,SMS_R_SYSTEM.ResourceType,SMS_R_SYSTEM.Name,SMS_R_SYSTEM.SMSUniqueIdentifier,SMS_R_SYSTEM.ResourceDomainORWorkgroup,SMS_R_SYSTEM.Client from SMS_R_System inner join SMS_G_System_SYSTEM_ENCLOSURE on SMS_G_System_SYSTEM_ENCLOSURE.ResourceID = SMS_R_System.ResourceId where SMS_G_System_SYSTEM_ENCLOSURE.ChassisTypes in ("8","9","10","11","12","14","18","21","30","31","32")
+
+Notes
+If you want to change the system enclosure type, here is Microsoft’s list of chassis type codes:
+
+1 Other
+2 Unknown
+3 Desktop
+4 Low Profile Desktop
+5 Pizza Box
+6 Mini Tower
+7 Tower
+8 Portable
+9 Laptop
+10 Notebook
+11 Hand Held
+12 Docking Station
+13 All in One
+14 Sub Notebook
+15 Space-Saving
+16 Lunch Box
+17 Main System Chassis
+18 Expansion Chassis
+19 Sub Chassis
+20 Bus Expansion Chassis
+21 Peripheral Chassis
+22 Storage Chassis
+23 Rack Mount Chassis
+24 Sealed-Case PC
+
+30 – Tablet
+31 – Convertible
+32 – Detachable
+
+£££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££
+
+
+
